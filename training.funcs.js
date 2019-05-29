@@ -1,5 +1,26 @@
 'use strict';
 
+let thereWasACriticalError = false;
+let allTrained = false;
+
+const isEmpty = (obj) => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
+const getNumOutputsInCurrentTrainingData = () => {
+    for (let key in currentTrainingData) {
+        if(currentTrainingData.hasOwnProperty(key)) {
+            return currentTrainingData[key][0].outputs.length;
+        }
+        return 0;
+    }
+    return 0;
+}
+
 const train = () => {
 
 /*
@@ -40,9 +61,9 @@ const train = () => {
             }
         }
 */
-        if (neuralNetwork !== undefined && currTrainingData !== undefined && currTrainingData.length > 0) {
+        if (neuralNetwork !== undefined && currentTrainingData !== undefined  && !isEmpty(currentTrainingData) ) {
 
-            let numOutputs = currentTrainingData[0].outputs.length;
+            let numOutputs = getNumOutputsInCurrentTrainingData();
 
             if (!allTrained) {
                 for (let i = 0; i < 50; i++) {
@@ -62,7 +83,9 @@ const train = () => {
             for (let i = 0; i < cols; i++) {
                 for (let j = 0; j < rows; j++) {
                         noStroke();
-                        let outputs = neuralNetwork.predict(random(currentTrainingData).inputs);
+                        let whichCategory = random(currentTrainingData); //birds, cats, dogs, etc.
+                        let whichInputs = random(whichCategory);
+                        let outputs = neuralNetwork.predict(whichInputs);
                         let whichColor = 0;
             let red = 0;
             let green = 0;
@@ -86,6 +109,8 @@ const train = () => {
                         rect(i * resolution, j * resolution, resolution, resolution);
                 }
             }
+        } else {
+            showMessages('danger','There was nothing to train');
         }
         
     } catch (error) {

@@ -53,11 +53,11 @@
                 <div class="panel-footer">
                     Select Input Data To Use/Add:
                     <button class="btn btn-default" onclick="doToggleUseTrainingOrTestingData(this)">Toggle Test Or Training</button>
-                    <button class="btn btn-default" onclick="doUseThishTrainingData('birds')">Birds</button>
-                    <button class="btn btn-default" onclick="doUseThisTrainingData('cats')">Cats</button>
-                    <button class="btn btn-default" onclick="doUseThisTrainingData('dogs')">Dogs</button>
-                    <button class="btn btn-default" onclick="doUseThisTrainingData('flowers')">Flowers</button>
-                    <button class="btn btn-default" onclick="doUseThisTrainingData('rainbows')">Rainbows</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('birds', this)">Birds</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('cats', this)">Cats</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('dogs', this)">Dogs</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('flowers', this)">Flowers</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('rainbows', this)">Rainbows</button>
                 </div>
             </div>
         </div>
@@ -74,13 +74,13 @@
                 </div>
                 <div class="panel-footer">
                     Show The Input Data:
-                    <button class="btn btn-default" onclick="doToggleTrainingVsTesting(this)">Toggle Test Or
+                    <button class="btn btn-default" onclick="doToggleTrainingVsTestingImages(this)">Toggle Test Or
                         Training</button>
-                    <button class="btn btn-default" onclick="doShowWhichShapesTrainingData('birds')">Birds</button>
-                    <button class="btn btn-default" onclick="doShowWhichShapesTrainingData('cats')">Cats</button>
-                    <button class="btn btn-default" onclick="doShowWhichShapesTrainingData('dogs')">Dogs</button>
-                    <button class="btn btn-default" onclick="doShowWhichShapesTrainingData('flowers')">Flowers</button>
-                    <button class="btn btn-default" onclick="doShowWhichShapesTrainingData('rainbows')">Rainbows</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('birds')">Birds</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('cats')">Cats</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('dogs')">Dogs</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('flowers')">Flowers</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('rainbows')">Rainbows</button>
                     <button class="btn btn-default" onclick="doInvert()">Invert</button>
                 </div>
             </div>
@@ -94,6 +94,7 @@
 <script src="js.vendor/matrix.js"></script>
 <script src="messages.js"></script>
 <script src="training.or.test.shapes.data.funcs.js"></script>
+<script src="current.training.data.funcs.js"></script>
 <script src="training.funcs.js"></script>
 <script src="neural.network.funcs.js"></script>
 <script src="sketch.js"></script>
