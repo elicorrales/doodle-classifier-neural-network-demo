@@ -64,6 +64,8 @@ const updateCurrentDataEitherTrainingOrTest = () => {
     } else {
         updateCurrentTestData();
     }
+
+    allTrained = false;
 }
 
 const doToggleUseTrainingOrTestingData = (obj) => {

@@ -1,5 +1,6 @@
 'use strict';
 
+let outputErrors;
 let thereWasACriticalError = false;
 let allTrained = false;
 
@@ -20,6 +21,33 @@ const getNumOutputsInCurrentTrainingData = () => {
     }
     return 0;
 }
+
+const getCurrentTrainingDataKeysAsArray = () => {
+
+    let keysArray = [];
+    for (let key in currentTrainingData) {
+        if(currentTrainingData.hasOwnProperty(key)) {
+            keysArray.push(key);
+        }
+    }
+    return keysArray;
+}
+
+const isAllTrained = (data, errors) => {
+    if (data===undefined || data.length===0 || errors===undefined || errors.length===0 || data.length!==errors.length) {
+        throw 'danger','Cant Train: Data Array Len ('
+                +data.length
+                +') incompatible with Errors Array Len ('
+                +errors.length
+                +'). You might be missing some shape(digit?).'
+                +' You can add it to the training data, or you can reduce the Network output nodes.';
+    }
+    for (let i = 0; i < data.length; i++) {
+        if (Math.abs(data[i] - errors[i]) > 0.03) return false;
+    }
+    return true;
+}
+
 
 const train = () => {
 
@@ -67,10 +95,12 @@ const train = () => {
 
             if (!allTrained) {
                 for (let i = 0; i < 50; i++) {
-                    let data = random(currentTrainingData);
-                    let errors = neuralNetwork.predict(data.inputs);
-                    allTrained = isAllTrained(data.outputs, errors);
-                    output_errors = neuralNetwork.train(data.inputs, data.outputs);
+                    let categoryKeys = getCurrentTrainingDataKeysAsArray();
+                    let whichCategoryKey = random(categoryKeys); //birds, cats, dogs, etc.
+                    let whichInputs = random(currentTrainingData[whichCategoryKey]);
+                    let errors = neuralNetwork.predict(whichInputs.inputs);
+                    allTrained = isAllTrained(whichInputs.outputs, errors);
+                    outputErrors = neuralNetwork.train(whichInputs.inputs, whichInputs.outputs);
                 }
             }
 
@@ -83,9 +113,10 @@ const train = () => {
             for (let i = 0; i < cols; i++) {
                 for (let j = 0; j < rows; j++) {
                         noStroke();
-                        let whichCategory = random(currentTrainingData); //birds, cats, dogs, etc.
-                        let whichInputs = random(whichCategory);
-                        let outputs = neuralNetwork.predict(whichInputs);
+                        let categoryKeys = getCurrentTrainingDataKeysAsArray();
+                        let whichCategoryKey = random(categoryKeys); //birds, cats, dogs, etc.
+                        let whichInputs = random(currentTrainingData[whichCategoryKey]);
+                        let outputs = neuralNetwork.predict(whichInputs.inputs);
                         let whichColor = 0;
             let red = 0;
             let green = 0;

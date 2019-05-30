@@ -17,4 +17,5 @@ function setup() {
 
 function draw() {
     drawTrainingOrTestImagesOnCanvas();
+    if (doTrain) train();
 }
