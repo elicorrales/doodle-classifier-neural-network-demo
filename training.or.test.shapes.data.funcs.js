@@ -1,5 +1,6 @@
 'use strict';
 
+
 const fileNamePrefix = './data/training.data/my.';
 const fileNameSuffix = '.test.data.1000.images.starting.at.0.bin';
 const imgBitmapWidth = 28;
@@ -9,6 +10,7 @@ const imgBitmapSize = imgBitmapWidth * imgBitmapHeight;
 const numImgsAcross = 10;
 const numImgsDown = 10;
 
+let modeShowTrainingTestImagesOnCanvas = false;
 
 //////////////////////////////////////////////////////////////////////////////////////
 // raw images training + test) from input files
@@ -155,6 +157,9 @@ const drawImgSet = (imgArray) => {
 
 const doShowWhichTrainingOrTestImages = (whichShapeNameToShow) => {
 
+    modeShowTrainingTestImagesOnCanvas = true;
+    doTrain = false;
+
     // this normally called from UI button, but can also be called when
     // switching between test and training... thus there wont be a param
     // passed in, because we're not switching which shape category (dogs, cats,etc) to show,
@@ -187,10 +192,18 @@ const doShowWhichTrainingOrTestImages = (whichShapeNameToShow) => {
 }
 
 const doInvert = () => {
+
+    modeShowTrainingTestImagesOnCanvas = true;
+    doTrain = false;
+
     invertTrainingImagesAndCanvasColoring = invertTrainingImagesAndCanvasColoring ? false : true;
 }
 
 const doToggleTrainingVsTestingImages = (obj) => {
+
+    modeShowTrainingTestImagesOnCanvas = true;
+    doTrain = false;
+
     toggleTrainingVsTesting = toggleTrainingVsTesting ? false : true;
 
     if (toggleTrainingVsTesting) {

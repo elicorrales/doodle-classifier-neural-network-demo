@@ -62,7 +62,7 @@ class NeuralNetwork {
 
     if (!input_array) throw 'For Predict, Missing Input Array for Training';
     if (input_array.length != this.input_nodes) {
-      debugger;
+      //debugger;
       throw 'For Predict, Input Length (' + input_array.length + ') not equal Network Inputs Size (' + this.input_nodes + ')';
     }
       
@@ -151,10 +151,7 @@ class NeuralNetwork {
     // Adjust the bias by its deltas (which is just the gradients)
     this.bias_h.add(hidden_gradient);
 
-    // outputs.print();
-    // targets.print();
-    // error.print();
-    return output_errors.data;
+    return output_errors.data.flat();
   }
 
   serialize() {

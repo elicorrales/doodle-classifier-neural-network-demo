@@ -38,21 +38,29 @@
                     <input id="nnNumHidden" type="text" placeholder="no of hidden" value="8" />
                     <label for="nnNumOutputs">Outputs:</label>
                     <input id="nnNumOutputs" type="text" placeholder="no of outputs" value="1" />
-                    <button class="btn btn-info" onclick="doCreateNetwork()">Create Network</button>
-                    <button class="btn btn-info" onclick="doTrainNetwork()">Train Network</button>
                     <div>
-                        <label class="checkbox-inline"><input id="autoRelearn" type="checkbox"
-                                onclick="doAutoRelearn()">Auto Re-learn</label>
+                        <!--
+                        <button class="btn btn-info" onclick="doCreateNetwork()">Create Network</button>
+                        -->
+                        <button class="btn btn-info" onclick="doTrainNetwork()">Train Network</button>
+                        <button class="btn btn-info" onclick="doTestNetwork()">Test Network</button>
+                        <button class="btn btn-info" onclick="doDoodle()">Doodle</button>
+                        <button class="btn btn-info" onclick="doGuess()">Guess</button>
+                        <button class="btn btn-info" onclick="doImageBoundary()">Img Boundary</button>
+                        <button class="btn btn-info" onclick="doImageGrid()">Img Grid</button>
                     </div>
                     Learning Rate: <span id="learningRate"></span>
-                    <input id="learningRateSlider" type="range" min="0.01" max="3.0" step="0.01" value="0.9" onchange="doChangeLearningRate()">
+                    <input id="learningRateSlider" type="range" min="0.01" max="3.0" step="0.01" value="0.9"
+                        onchange="doChangeLearningRate()">
                     Time To Wait (seconds): <span id="trainingWait"></span>
-                    <input id="trainingWaitSlider" type="range" min="1" max="60" step="1" value="4" onchange="doChangeTrainingWaitTime()">
+                    <input id="trainingWaitSlider" type="range" min="1" max="60" step="1" value="4"
+                        onchange="doChangeTrainingWaitTime()">
 
                 </div>
                 <div class="panel-footer">
                     Select Input Data To Use/Add:
-                    <button class="btn btn-default" onclick="doToggleUseTrainingOrTestingData(this)">Toggle Test Or Training</button>
+                    <button class="btn btn-warning" onclick="doToggleUseTrainingOrTestingData(this)">Using Training
+                        Data</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('birds', this)">Birds</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('cats', this)">Cats</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('dogs', this)">Dogs</button>
@@ -69,7 +77,7 @@
                 <div class="panel-heading">
                     Canvas
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" style="background:aliceblue">
                     <div id="canvasParent"></div>
                 </div>
                 <div class="panel-footer">
@@ -79,8 +87,10 @@
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('birds')">Birds</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('cats')">Cats</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('dogs')">Dogs</button>
-                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('flowers')">Flowers</button>
-                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('rainbows')">Rainbows</button>
+                    <button class="btn btn-default"
+                        onclick="doShowWhichTrainingOrTestImages('flowers')">Flowers</button>
+                    <button class="btn btn-default"
+                        onclick="doShowWhichTrainingOrTestImages('rainbows')">Rainbows</button>
                     <button class="btn btn-default" onclick="doInvert()">Invert</button>
                 </div>
             </div>
@@ -96,7 +106,10 @@
 <script src="training.or.test.shapes.data.funcs.js"></script>
 <script src="current.training.data.funcs.js"></script>
 <script src="training.funcs.js"></script>
+<script src="testing.funcs.js"></script>
 <script src="neural.network.funcs.js"></script>
+<script src="doodling.funcs.js"></script>
+<script src="guessing.funcs.js"></script>
 <script src="sketch.js"></script>
 
 </html>

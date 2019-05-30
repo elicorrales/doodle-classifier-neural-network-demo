@@ -9,13 +9,16 @@ function setup() {
     let canvas = createCanvas(500,500);
     resizeCanvas(imgBitmapWidth*numImgsAcross, imgBitmapHeight*numImgsDown);
     canvas.parent('canvasParent');
-
+    background(255);
     setupTrainingTestingImagesAndDataArrays();
     setupTrainingAndTestingData();
 }
 
 
 function draw() {
-    drawTrainingOrTestImagesOnCanvas();
-    if (doTrain) train();
+    if (modeShowTrainingTestImagesOnCanvas) {
+        drawTrainingOrTestImagesOnCanvas();
+    } else if (doTrain) {
+        train();
+    } 
 }

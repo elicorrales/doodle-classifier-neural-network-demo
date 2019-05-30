@@ -9,51 +9,59 @@ const trainingWaitSliderElem = document.getElementById('trainingWaitSlider');
 const trainingWaitElem = document.getElementById('trainingWait');
 const autoRelearnElem = document.getElementById('autoRelearn');
 
-let trainingStartTime = new Date().getTime();
 let neuralNetwork;
 let doTrain = false;
 
-const doCreateNetwork = () => {
-    clearMessages();
-    let numIn = parseInt(nnNumInputsElem.value);
-    let numHid = parseInt(nnNumHiddenElem.value);
-    let numOut = parseInt(nnNumOutputsElem.value);
-    let sqrt = Math.sqrt(numIn);
-    let badNumber = numIn%sqrt;
-    if (badNumber) {
-        showMessages('danger','Need Inputs that make Square (9, 16, 25, etc)');
-        return;
+const doTrainNetwork = () => {
+    try {
+        clearMessages();
+        resetTrainingStatus();
+        modeShowTrainingTestImagesOnCanvas = false;
+
+        let numIn = parseInt(nnNumInputsElem.value);
+        let numHid = parseInt(nnNumHiddenElem.value);
+        let numOut = parseInt(nnNumOutputsElem.value);
+        let sqrt = Math.sqrt(numIn);
+        let badNumber = numIn % sqrt;
+        if (badNumber) {
+            showMessages('danger', 'Attempted to Create Network. Need Inputs that make Square (9, 16, 25, etc)');
+            return;
+        }
+        neuralNetwork = new NeuralNetwork(numIn, numHid, numOut);
+        //showMessages('success', 'New Network Created');
+        doTrain = true;
+    } catch (error) {
+        showMessages('danger', 'Inside doCreateNetwork: ' + error);
+        console.log(error);
     }
-    neuralNetwork = new NeuralNetwork(numIn, numHid, numOut);
-    showMessages('success','New Network Created');
-    trainingStartTime = new Date().getTime();
-    allTrained = false;
 }
 
-const doTrainNetwork = () => {
-    clearMessages();
-    if (neuralNetwork!==undefined) {
-        allTrained = false;
-        doTrain = true;
-    } else {
-        showMessages('danger','No Network Created');
+const doTestNetwork = () => {
+    try {
+        test();
+    } catch (error) {
+        showMessages('danger', 'Inside doCreateNetwork: ' + error);
+        console.log(error);
     }
+
 }
 
 const doChangeLearningRate = () => {
-    clearMessages();
     let learningRate = learningRateSliderElem.value;
     learningRateElem.innerHTML = learningRate;
-    doCreateNetwork();
+    doTrainNetwork();
 }
 
 const doChangeTrainingWaitTime = () => {
-    clearMessages();
     let wait = trainingWaitSliderElem.value;
     trainingWaitElem.innerHTML = wait;
-    doCreateNetwork();
+    doTrainNetwork();
 }
 
-const doAutoRelearn = () => {
-    autoRelearn = autoRelearnElem.checked;
+const doDoodle = () => {
+    doClearCanvas();
+}
+
+const doGuess = () => {
+    guess();
 }
