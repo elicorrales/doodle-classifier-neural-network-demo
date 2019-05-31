@@ -7,7 +7,13 @@ const learningRateSliderElem = document.getElementById('learningRateSlider');
 const learningRateElem = document.getElementById('learningRate');
 const trainingWaitSliderElem = document.getElementById('trainingWaitSlider');
 const trainingWaitElem = document.getElementById('trainingWait');
-const autoRelearnElem = document.getElementById('autoRelearn');
+
+const overallMaxTrainingErrorGoalSliderElem = document.getElementById('overallMaxTrainingErrorGoalSlider');
+const overallMaxTrainingErrorGoalElem = document.getElementById('overallMaxTrainingErrorGoal');
+const maxTestingErrorGoalSliderElem = document.getElementById('maxTestingErrorGoalSlider');
+const maxTestingErrorGoalElem = document.getElementById('maxTestingErrorGoal');
+
+
 
 let neuralNetwork;
 let doTrain = false;
@@ -36,6 +42,7 @@ const doCreateTrainNetwork = () => {
 
         neuralNetwork = new NeuralNetwork(numIn, numHid, numOut);
         //showMessages('success', 'New Network Created');
+        neuralNetwork.setLearningRate(learningRateSliderElem.value);
         doTrain = true;
     } catch (error) {
         showMessages('danger', 'Inside doCreateTrainNetwork: ' + error);
@@ -51,7 +58,6 @@ const doTrainNetworkAgain = () => {
         modeShowTrainingTestImagesOnCanvas = false;
 
         let numIn = parseInt(nnNumInputsElem.value);
-        let numHid = parseInt(nnNumHiddenElem.value);
         let numOut = parseInt(nnNumOutputsElem.value);
         let sqrt = Math.sqrt(numIn);
         let badNumber = numIn % sqrt;
@@ -88,17 +94,32 @@ const doTestNetwork = () => {
 
 }
 
-const doChangeLearningRate = () => {
-    let learningRate = learningRateSliderElem.value;
+const doChangeLearningRate = (slider) => {
+    let learningRate = slider.value;
+    //let learningRate = learningRateSliderElem.value;
     learningRateElem.innerHTML = learningRate;
-    doCreateTrainNetwork();
+    resetTrainingStatus();
 }
 
-const doChangeTrainingWaitTime = () => {
-    let wait = trainingWaitSliderElem.value;
+const doChangeTrainingWaitTime = (slider) => {
+    let wait = slider.value;
+    //let wait = trainingWaitSliderElem.value;
     trainingWaitElem.innerHTML = wait;
-    doCreateTrainNetwork();
+    resetTrainingStatus();
 }
+
+const doChangeOverallMaxTrainingErrorGoal = (slider) => {
+    let errorGoal = slider.value;
+    overallMaxTrainingErrorGoalElem.innerHTML = errorGoal;
+    resetTrainingStatus();
+}
+
+const doChangeMaxTestingErrorGoal = (slider) => {
+    let errorGoal = slider.value;
+    maxTestingErrorGoalElem.innerHTML = errorGoal;
+    resetTrainingStatus();
+}
+
 
 const doDoodle = () => {
     doClearCanvas();

@@ -8,6 +8,10 @@ let trainingStartTime = new Date().getTime();
 let numTrainingCyclesBeforeTrained = 0;
 let currentTrainingDataIndex = 0;
 
+let displayResolution = 10;
+let currDispCol = 0;
+let currDispRow = 0;
+
 const resetTrainingStatus = () => {
     background(0);
     doTrain = false;
@@ -15,8 +19,9 @@ const resetTrainingStatus = () => {
     allTrained = false;
     trainingStartTime = new Date().getTime();
     numTrainingCyclesBeforeTrained = 0;
+    currentTrainingDataIndex = 0;
     if (currentTrainingDataIsAllTrainedTrackingArray !== undefined) {
-        for (let i=0; i<currentTrainingDataIsAllTrainedTrackingArray.length; i++) {
+        for (let i = 0; i < currentTrainingDataIsAllTrainedTrackingArray.length; i++) {
             currentTrainingDataIsAllTrainedTrackingArray[i] = false;
             currentTrainingDataErrorTrackingArray[i] = 1;
         }
@@ -53,61 +58,30 @@ const getCurrentTrainingDataKeysAsArray = () => {
     return keysArray;
 }
 
-const isAllErrorsLessThanMin = (minErr, data, errors, useThisFuncForTestResultsOnly) => {
-    if (data === undefined || data.length === 0 || errors === undefined || errors.length === 0 || data.length !== errors.length) {
-        throw 'danger', 'Cant Train: Data Array Len ('
-        + data.length
-        + ') incompatible with Errors Array Len ('
-        + errors.length
-        + '). You might be missing some shape(digit?).'
-        + ' You can add it to the training data, or you can reduce the Network output nodes.';
+
+const isAllErrorsLessThanMin = (minErr, errors) => {
+    if (errors === undefined || errors.length === 0) {
+        throw 'danger', 'Missing errors during training?';
     }
 
-    let whichDataIdxIsHigh;
-    for (let i=0; i<data.length; i++) {
-        if (data[i]===1) {
-            whichDataIdxIsHigh = i;
-        }
-    }
+    let sumOfErrors = 0;
+    errors.forEach(e => { sumOfErrors += Math.abs(e); });
 
-    let delta = Math.abs(data[whichDataIdxIsHigh] - errors[whichDataIdxIsHigh]);
-    let isGoodResult =  delta < minErr;
+    let isGoodResult = sumOfErrors < (minErr * errors.length);
 
-    if (useThisFuncForTestResultsOnly) { return isGoodResult; }
-
-    if (isGoodResult) {
-        currentTrainingDataIsAllTrainedTrackingArray[whichDataIdxIsHigh] = true;
-        currentTrainingDataErrorTrackingArray[whichDataIdxIsHigh] = errors[whichDataIdxIsHigh];
-    }
-
-    for (let i=0; i<currentTrainingDataIsAllTrainedTrackingArray.length; i++) {
-        if (!currentTrainingDataIsAllTrainedTrackingArray[i]) {
-            return false;
-        }
-    }
-    
-    return true;
+    return isGoodResult;
 }
+
 
 
 const train = () => {
 
-    /*
-        if (currentTrainingData === undefined || currentTrainingData.length < 1) {
-            showMessages('danger','No Training Data Selected Or There is no data');
-            return;
-        }
-    
-        if (thereWasACriticalError) return;
-        if (timeRanOut) return;
-    */
+    stroke(255);
+
     try {
-        /*
-                //background(0);
-       */
         if (allTrained) {
-            showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained 
-                                                + ' cycles, Error: ' + parseFloat(totalErrorDelta).toFixed(4));
+            showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained
+                + ' cycles, Error: ' + parseFloat(totalErrorDelta).toFixed(4));
             doTrain = false;
             return;
         }
@@ -115,9 +89,7 @@ const train = () => {
         let currentTime = new Date().getTime();
         let deltaTrainingTime = (currentTime - trainingStartTime) / 1000;
         let trainingWait = parseInt(trainingWaitSliderElem.value);
-        if (!allTrained) showMessages('info', 'Training ' + parseInt(deltaTrainingTime).toFixed(1) 
-                                                            + 'secs , at ' + numTrainingCyclesBeforeTrained + ' cycles '
-                                                            + 'error: ' + parseFloat(totalErrorDelta).toFixed(4) + '...');
+        showMessages('info', 'Training ' + parseInt(deltaTrainingTime).toFixed(1) + 'secs , at ' + numTrainingCyclesBeforeTrained + ' cycles ' + 'error: ' + parseFloat(totalErrorDelta).toFixed(4) + '...');
         if (deltaTrainingTime > trainingWait && !allTrained) {
             showMessages('danger', 'Time Ran Out');
             doTrain = false;
@@ -125,65 +97,54 @@ const train = () => {
         }
 
         if (neuralNetwork !== undefined && currentTrainingData !== undefined && !isEmpty(currentTrainingData)) {
-        //if (neuralNetwork !== undefined && currentTrainingData !== undefined && currentTrainingData.length>0) {
 
-            if (!allTrained) {
-                for (let i = 0; i < currentTrainingData.length; i++) {
-                    numTrainingCyclesBeforeTrained++;
-                    //let whichInputs = currentTrainingData[currentTrainingDataIndex];
-                    let whichInputs = currentTrainingData[i];
-                    currentTrainingDataIndex++;
-                    if (currentTrainingDataIndex>=currentTrainingData.length) currentTrainingDataIndex = 0;
-                    outputErrors = neuralNetwork.train(whichInputs.inputs, whichInputs.outputs);
-                    let allErrorsLessThanMin = isAllErrorsLessThanMin(0.03, whichInputs.outputs, outputErrors);
-                    if (outputErrors !== undefined) {
-                        totalErrorDelta = 0;
-                        outputErrors.forEach(e => totalErrorDelta+= Math.abs(e));
-                    } else {
-                        totalErrorDelta = 1;
-                    }
-                    if (allErrorsLessThanMin && totalErrorDelta<0.9) {
-                        allTrained = true;
-                        break;
-                    };
-                    let outputs = neuralNetwork.predict(whichInputs.inputs);
-                    //console.log(outputs);
-                }
+            //TRAIN
+            let whichInputs = currentTrainingData[currentTrainingDataIndex];
+            outputErrors = neuralNetwork.train(whichInputs.inputs, whichInputs.outputs);
+
+            let sumErrors = 0;
+            outputErrors.forEach(e => { sumErrors += Math.abs(e); });
+
+            //DISPLAY PROGRESS
+            let horzResolution = width / outputErrors.length;
+            let vertResolution = height / outputErrors.length;
+            let cols = width / horzResolution;
+            let rows = height / vertResolution;
+
+            let colorVal = Math.trunc(255 - 255 * (sumErrors / outputErrors.length));
+            fill(colorVal, colorVal, colorVal);
+            rect(currDispCol * horzResolution, currDispRow * vertResolution, horzResolution, vertResolution);
+            currDispCol++;
+            if (currDispCol >= cols) {
+                currDispCol = 0;
+                currDispRow++;
+            }
+            if (currDispRow >= rows) {
+                currDispRow = 0;
             }
 
-            if (!allTrained) showMessages('info', 'Training ' + parseInt(deltaTrainingTime).toFixed(1) 
-                                                            + 'secs , at ' + numTrainingCyclesBeforeTrained + ' cycles '
-                                                            + 'error: ' + parseFloat(totalErrorDelta).toFixed(4) + '...');
-            //if (!allTrained) {
-                neuralNetwork.setLearningRate(learningRateSliderElem.value);
-                background(0);
-                let resolution = 10;//numOutputs*4;
-                let cols = width / resolution;
-                let rows = height / resolution;
-                let whichInputs = currentTrainingData[currentTrainingDataIndex];
-                currentTrainingDataIndex++;
-                if (currentTrainingDataIndex>=currentTrainingData.length) currentTrainingDataIndex = 0;
-                //let outputs = neuralNetwork.predict(whichInputs.inputs);
-                let whichOutputError = 0;
-                for (let i = 0; i < cols; i++) {
-                    for (let j = 0; j < rows; j++) {
-                        noStroke();
-                        let colorVal = 0;
-                        let colorDeltaFactor = Math.abs(outputErrors[whichOutputError]);
-                        if (colorDeltaFactor < 0.01) {
-                            colorVal = 255;
-                        } else {
-                            colorVal = 255 - 250 * (colorDeltaFactor/Math.abs(1-colorDeltaFactor));
-                        }
-                        fill(colorVal, colorVal, colorVal);
-                        rect(i * resolution, j * resolution, resolution, resolution);
-                        whichOutputError++;
-                        if (whichOutputError>=outputErrors.length) { whichOutputError=0;}
-                    }
-                }
-            //}
+            //CHECK IF TRAINED
+            let overallMaxTrainingErrorGoal = overallMaxTrainingErrorGoalSliderElem.value;
+            let allErrorsLessThanMin = isAllErrorsLessThanMin(overallMaxTrainingErrorGoal, outputErrors);
 
-            doTrain = false;
+            if (allErrorsLessThanMin) {
+                allTrained = true;
+            }
+
+            currentTrainingDataIndex++;
+            if (currentTrainingDataIndex >= currentTrainingData.length) {
+                showMessages('danger', 'done with currentTraingData.length');
+                doTrain = false;
+                return;
+            }
+
+            if (allTrained) {
+                showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained
+                    + ' cycles, Error: ' + parseFloat(totalErrorDelta).toFixed(4));
+                doTrain = false;
+                return;
+            }
+
 
 
         } else {

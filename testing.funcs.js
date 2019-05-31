@@ -1,6 +1,23 @@
 
 let toggleModifiedTestingData = false;
 
+const isAllDifferencesLessThanMin = (minErr, expected, outputs) => {
+    if (expected === undefined || outputs === undefined || expected.length !== outputs.length) {
+        throw 'danger', 'Outputs Issue during testing - see \'isAllDifferencesLessThanMin()\'';
+    }
+
+    let sumOfDelta = 0;
+    for (let i=0; i< expected.length; i++) {
+        let delta = Math.abs(expected[i] - outputs[i]);
+        sumOfDelta += delta;
+    }
+    let isGoodResult =  sumOfDelta < minErr*expected.length;
+
+    return isGoodResult;
+}
+
+
+
 
 /*********************************************************************************
  * training data has been collected into a single large array containing all
@@ -17,23 +34,20 @@ const testWithTrainingData = () => {
         showMessages('danger', 'No Neural Network');
         return;
     }
-    let categoryErrorCount = 0;
     let totalErrorCount = 0;
     for (let i = 0; i < currentTrainingData.length; i++) {
         let category = currentTrainingData[i].label;
         let expectedOutputs = currentTrainingData[i].outputs;
         let inputs = currentTrainingData[i].inputs.slice(0);
-        categoryErrorCount = 0;
         if (toggleModifiedTestingData) {
             for (let j = 0; j < inputs.length; j++) {
                 inputs[j] = 1;
             }
         }
         let outputs = neuralNetwork.predict(inputs);
-        let useThisFuncForTestResultsOnly = true;
-        if (!isAllErrorsLessThanMin(0.2, expectedOutputs, outputs, useThisFuncForTestResultsOnly)) {
-            categoryErrorCount++;
-            totalErrorCount += categoryErrorCount;
+        let maxTestingErrorGoal = maxTestingErrorGoalSliderElem.value;
+        if (!isAllDifferencesLessThanMin(maxTestingErrorGoal, expectedOutputs, outputs)) {
+            totalErrorCount ++;
         }
     }
     console.log('Total Errors : ' + totalErrorCount);
