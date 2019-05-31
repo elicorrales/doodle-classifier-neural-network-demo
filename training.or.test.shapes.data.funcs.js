@@ -37,15 +37,6 @@ let housesTrainingImages;
 let booksTrainingImages;
 let bananasTrainingImages;
 
-let birdsModifiedTrainingImages;
-let catsModifiedTrainingImages;
-let dogsModifiedTrainingImages;
-let flowersModifiedTrainingImages;
-let rainbowsModifiedTrainingImages;
-let housesModifiedTrainingImages;
-let booksModifiedTrainingImages;
-let bananasModifiedTrainingImages;
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 // raw test images portion from input files
@@ -284,12 +275,9 @@ const doInvert = () => {
 }
 
 const doToggleTrainingVsTestingImages = (button) => {
-
     modeShowTrainingTestImagesOnCanvas = true;
     doTrain = false;
-
     toggleTrainingVsTesting = toggleTrainingVsTesting ? false : true;
-
     if (toggleTrainingVsTesting) {
         button.className = 'btn btn-warning';
         button.innerHTML = 'Show Trainnig Images';

@@ -75,7 +75,12 @@ const doTrainNetworkAgain = () => {
 const doTestNetwork = () => {
     try {
         doClearCanvas();
-        test();
+        if (toggleUseTrainingOrTestingData) {
+            testWithTrainingData();
+        } else {
+            testWithTestingData();
+        }
+
     } catch (error) {
         showMessages('danger', 'Inside doTestNetwork: ' + error);
         console.log(error);
