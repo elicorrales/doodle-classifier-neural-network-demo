@@ -16,24 +16,21 @@ let useCatsTrainingData = false;
 let useDogsTrainingData = false;
 let useFlowersTrainingData = false;
 let useRainbowsTrainingData = false;
+let useHousesTrainingData = false;
+let useBooksTrainingData = false;
+let useBananasTrainingData = false;
 
-const removeUnSelectedDataFromCurrentEitherTrainingOrTest = (whichDataName) => {
-
-    if (currentTrainingData === undefined) {
-        return;
-    }
-    delete currentTrainingData[whichDataName];
-    delete currentTestData[whichDataName];
+const removeAllAndStartOver = () => {
+    currentTrainingData = undefined;
+    currentTestData = undefined;
 }
 
-const updateCurrentTrainingData = () => {
+const updateCurrentData = () => {
 
     //numTrainingCyclesBeforeTrained = 0;
  
-    if (currentTrainingData === undefined) {
-        currentTrainingData = {};
-        currentTestData = {};
-    }
+    currentTrainingData = {};
+    currentTestData = {};
 
     let numOutputs = 0;
 
@@ -75,9 +72,42 @@ const updateCurrentTrainingData = () => {
         currentTrainingDataIsAllTrainedTrackingArray.push(false);
         currentTrainingDataErrorTrackingArray.push(1);
     }
+    if (useHousesTrainingData) {
+        currentTrainingData['houses'] = housesTrainingData;
+        currentTestData['houses'] = housesTestData;
+        numOutputs++;
+        currentTrainingDataIsAllTrainedTrackingArray.push(false);
+        currentTrainingDataErrorTrackingArray.push(1);
+    }
+    if (useBooksTrainingData) {
+        currentTrainingData['books'] = booksTrainingData;
+        currentTestData['books'] = booksTestData;
+        numOutputs++;
+        currentTrainingDataIsAllTrainedTrackingArray.push(false);
+        currentTrainingDataErrorTrackingArray.push(1);
+    }
+    if (useBananasTrainingData) {
+        currentTrainingData['bananas'] = bananasTrainingData;
+        currentTestData['bananas'] = bananasTestData;
+        numOutputs++;
+        currentTrainingDataIsAllTrainedTrackingArray.push(false);
+        currentTrainingDataErrorTrackingArray.push(1);
+    }
+
+
+    if (numOutputs === 0) {
+        showMessages('danger','No Training / Test Categories Selected');
+        currentTrainingData = undefined;
+        currentTestData = undefined;
+        return;
+    }
 
     let theHighOutputIdx = 0;
     for (let key in currentTrainingData) { //for each category....  ('birds','cats'...)
+
+        if (!currentTrainingData.hasOwnProperty(key)) {
+            throw 'there was an error attempting to create training/testing data arrays #1';
+        }
 
         //this creates an output array that should have the number of outputs as there are selected categories to train (or test).
         //so, if we selected 'birds', and 'cats', the  output array should contain 2 elements.
@@ -103,45 +133,61 @@ const updateCurrentTrainingData = () => {
 
         theHighOutputIdx++;// we're moving on to next category (like from 'birds' to 'cats').
     }
-}
 
-const updateCurrentTestData = () => {
 
-}
-
-const updateCurrentDataEitherTrainingOrTest = () => {
-
-    resetTrainingStatus();
-
-    if (toggleUseTrainingOrTestingData) {
-        updateCurrentTrainingData();
-    } else {
-        updateCurrentTestData();
+    //now let's simplify the above from an object (map) with multiple category arrays.. to just one big array, AND all mixed.(shuffed)
+    // the purpose of all the above was to dynamically on the fly generate the correct number of output positions for each category,
+    // all depending on what categories are selected or not.
+    let tempTrainingData = [];
+    for (let key in currentTrainingData) { //for each category....  ('birds','cats'...)
+        if (!currentTrainingData.hasOwnProperty(key)) {
+            throw 'there was an error attempting to create training/testing data arrays #2';
+        }
+        let temp = currentTrainingData[key];
+        tempTrainingData = tempTrainingData.concat(temp);
     }
+    currentTrainingData = tempTrainingData;
 
-    allTrained = false;
+    let tempTestData = [];
+    for (let key in currentTestData) { //for each category....  ('birds','cats'...)
+        if (!currentTestData.hasOwnProperty(key)) {
+            throw 'there was an error attempting to create training/testing data arrays #2';
+        }
+        let temp = currentTestData[key];
+        tempTestData = tempTestData.concat(temp)
+    }
+    currentTestData = tempTestData;
+
+    //now we want to shuffle so as to randomize for training and testing
+    shuffle(currentTrainingData,true);
+    shuffle(currentTestData,true);
+
 }
 
-const doToggleUseTrainingOrTestingData = (obj) => {
+
+
+const doToggleUseTrainingOrTestingData = (button) => {
 
     clearMessages();
+    resetTrainingStatus();
 
     toggleUseTrainingOrTestingData = toggleUseTrainingOrTestingData ? false : true;
 
     if (toggleUseTrainingOrTestingData) {
-        obj.className = 'btn btn-warning';
-        obj.innerHTML = 'Using Trainnig Data';
+        button.className = 'btn btn-warning';
+        button.innerHTML = 'Using Trainnig Data';
     } else {
-        obj.className = 'btn btn-info';
-        obj.innerHTML = 'Using Test Data';
+        button.className = 'btn btn-info';
+        button.innerHTML = 'Using Test Data';
     }
    
-    updateCurrentDataEitherTrainingOrTest();
+    updateCurrentData();
 }
 
 const doUseThisTrainingData = (whichDataName, button) =>{
 
     clearMessages();
+    resetTrainingStatus();
 
     let btnIsPressed;
     switch (whichDataName) {
@@ -165,15 +211,27 @@ const doUseThisTrainingData = (whichDataName, button) =>{
                     useRainbowsTrainingData = useRainbowsTrainingData? false : true;
                     btnIsPressed = useRainbowsTrainingData;
                     break;
+        case 'houses':
+                    useHousesTrainingData = useHousesTrainingData? false : true;
+                    btnIsPressed = useHousesTrainingData;
+                    break;
+        case 'books':
+                    useBooksTrainingData = useBooksTrainingData? false : true;
+                    btnIsPressed = useBooksTrainingData;
+                    break;
+        case 'bananas':
+                    useBananasTrainingData = useBananasTrainingData? false : true;
+                    btnIsPressed = useBananasTrainingData;
+                    break;
         default:
                     throw 'Unknown type in \'doUseThisTrainingData()\'';
                     break;
     }
   
     if (!btnIsPressed) {
-        removeUnSelectedDataFromCurrentEitherTrainingOrTest(whichDataName);
+        removeAllAndStartOver();
     }
 
     button.className = btnIsPressed? 'btn btn-primary' : 'btn btn-default';
-    updateCurrentDataEitherTrainingOrTest();
+    updateCurrentData();
 }

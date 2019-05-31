@@ -6,6 +6,7 @@ let thereWasACriticalError = false;
 let allTrained = false;
 let trainingStartTime = new Date().getTime();
 let numTrainingCyclesBeforeTrained = 0;
+let currentTrainingDataIndex = 0;
 
 const resetTrainingStatus = () => {
     background(0);
@@ -52,7 +53,7 @@ const getCurrentTrainingDataKeysAsArray = () => {
     return keysArray;
 }
 
-const isAllErrorsLessThanMin = (data, errors) => {
+const isAllErrorsLessThanMin = (minErr, data, errors) => {
     if (data === undefined || data.length === 0 || errors === undefined || errors.length === 0 || data.length !== errors.length) {
         throw 'danger', 'Cant Train: Data Array Len ('
         + data.length
@@ -69,7 +70,7 @@ const isAllErrorsLessThanMin = (data, errors) => {
         }
     }
 
-    if (Math.abs(data[whichDataIdxIsHigh] - errors[whichDataIdxIsHigh] < 0.15)) {
+    if (Math.abs(data[whichDataIdxIsHigh] - errors[whichDataIdxIsHigh] < minErr)) {
         currentTrainingDataIsAllTrainedTrackingArray[whichDataIdxIsHigh] = true;
         currentTrainingDataErrorTrackingArray[whichDataIdxIsHigh] = errors[whichDataIdxIsHigh];
     }
@@ -121,16 +122,15 @@ const train = () => {
         if (neuralNetwork !== undefined && currentTrainingData !== undefined && !isEmpty(currentTrainingData)) {
         //if (neuralNetwork !== undefined && currentTrainingData !== undefined && currentTrainingData.length>0) {
 
-            let numOutputs = getNumOutputsInCurrentTrainingData();
-
             if (!allTrained) {
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < currentTrainingData.length; i++) {
                     numTrainingCyclesBeforeTrained++;
-                    let categoryKeys = getCurrentTrainingDataKeysAsArray();
-                    let whichCategoryKey = random(categoryKeys); //birds, cats, dogs, etc.
-                    let whichInputs = random(currentTrainingData[whichCategoryKey]);
+                    //let whichInputs = currentTrainingData[currentTrainingDataIndex];
+                    let whichInputs = currentTrainingData[i];
+                    currentTrainingDataIndex++;
+                    if (currentTrainingDataIndex>=currentTrainingData.length) currentTrainingDataIndex = 0;
                     outputErrors = neuralNetwork.train(whichInputs.inputs, whichInputs.outputs);
-                    let allErrorsLessThanMin = isAllErrorsLessThanMin(whichInputs.outputs, outputErrors);
+                    let allErrorsLessThanMin = isAllErrorsLessThanMin(0.03, whichInputs.outputs, outputErrors);
                     if (outputErrors !== undefined) {
                         totalErrorDelta = 0;
                         outputErrors.forEach(e => totalErrorDelta+= Math.abs(e));
@@ -141,19 +141,24 @@ const train = () => {
                         allTrained = true;
                         break;
                     };
+                    let outputs = neuralNetwork.predict(whichInputs.inputs);
+                    //console.log(outputs);
                 }
             }
 
+            if (!allTrained) showMessages('info', 'Training ' + parseInt(deltaTrainingTime).toFixed(1) 
+                                                            + 'secs , at ' + numTrainingCyclesBeforeTrained + ' cycles '
+                                                            + 'error: ' + parseFloat(totalErrorDelta).toFixed(4) + '...');
             //if (!allTrained) {
                 neuralNetwork.setLearningRate(learningRateSliderElem.value);
                 background(0);
                 let resolution = 10;//numOutputs*4;
                 let cols = width / resolution;
                 let rows = height / resolution;
-                let categoryKeys = getCurrentTrainingDataKeysAsArray();
-                let whichCategoryKey = random(categoryKeys); //birds, cats, dogs, etc.
-                let whichInputs = random(currentTrainingData[whichCategoryKey]);
-                let outputs = neuralNetwork.predict(whichInputs.inputs);
+                let whichInputs = currentTrainingData[currentTrainingDataIndex];
+                currentTrainingDataIndex++;
+                if (currentTrainingDataIndex>=currentTrainingData.length) currentTrainingDataIndex = 0;
+                //let outputs = neuralNetwork.predict(whichInputs.inputs);
                 let whichOutputError = 0;
                 for (let i = 0; i < cols; i++) {
                     for (let j = 0; j < rows; j++) {
@@ -172,6 +177,10 @@ const train = () => {
                     }
                 }
             //}
+
+            doTrain = false;
+
+
         } else {
             showMessages('danger', 'There was nothing to train');
             doTrain = false;

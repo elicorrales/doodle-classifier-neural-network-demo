@@ -13,18 +13,6 @@
 
     <div id="messages"></div>
 
-    <div class="container">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div id="navbar" class="navbar ">
-                    <ul class="nav navbar-nav">
-                        <li id="shapesNavBtn"><a href="#" onclick="doShowShapesSection()">Shapes</a></li>
-                        <li id="trainNavBtn"><a href="#" onclick="doShowTrainingSection()">Train</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </div>
     <div class="container container-fluid">
         <div class="row">
             <div class="panel panel-default">
@@ -33,16 +21,14 @@
                 </div>
                 <div class="panel-body">
                     <label for="nnNumInputs">Inputs:</label>
-                    <input id="nnNumInputs" type="text" placeholder="no of inputs" value="2" />
+                    <input id="nnNumInputs" type="text" placeholder="no of inputs" value="784" />
                     <label for="nnNumHidden">Hidden:</label>
-                    <input id="nnNumHidden" type="text" placeholder="no of hidden" value="8" />
+                    <input id="nnNumHidden" type="text" placeholder="no of hidden" value="64" />
                     <label for="nnNumOutputs">Outputs:</label>
                     <input id="nnNumOutputs" type="text" placeholder="no of outputs" value="1" />
                     <div>
-                        <!--
-                        <button class="btn btn-info" onclick="doCreateNetwork()">Create Network</button>
-                        -->
-                        <button class="btn btn-info" onclick="doTrainNetwork()">Train Network</button>
+                        <button class="btn btn-info" onclick="doCreateTrainNetwork()">Create/Train Network</button>
+                        <button class="btn btn-info" onclick="doTrainNetworkAgain()">Train Network More</button>
                         <button class="btn btn-info" onclick="doTestNetwork()">Test Network</button>
                         <button class="btn btn-info" onclick="doDoodle()">Doodle</button>
                         <button class="btn btn-info" onclick="doGuess()">Guess</button>
@@ -61,11 +47,15 @@
                     Select Input Data To Use/Add:
                     <button class="btn btn-warning" onclick="doToggleUseTrainingOrTestingData(this)">Using Training
                         Data</button>
+                    <button class="btn btn-default" onclick="doToggleModifiedTrainingData(this)">Toggle Modified</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('birds', this)">Birds</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('cats', this)">Cats</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('dogs', this)">Dogs</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('flowers', this)">Flowers</button>
                     <button class="btn btn-default" onclick="doUseThisTrainingData('rainbows', this)">Rainbows</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('houses', this)">Houses</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('books', this)">Books</button>
+                    <button class="btn btn-default" onclick="doUseThisTrainingData('bananas', this)">Bananas</button>
                 </div>
             </div>
         </div>
@@ -77,13 +67,23 @@
                 <div class="panel-heading">
                     Canvas
                 </div>
-                <div class="panel-body" style="background:aliceblue">
-                    <div id="canvasParent"></div>
+                <div class="row">
+                    <div class="panel-body" style="background:aliceblue">
+                        <div class="col-xs-6">
+                            <div id="canvasParent"></div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div id="JUMBOTRON" style="display:none" class="jumbotron jumbotron-fluid">
+                                <center>
+                                    <h1 class="display-4" id="GUESS"></h1>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="panel-footer">
                     Show The Input Data:
-                    <button class="btn btn-default" onclick="doToggleTrainingVsTestingImages(this)">Toggle Test Or
-                        Training</button>
+                    <button class="btn btn-default" onclick="doToggleTrainingVsTestingImages(this)">Toggle Test Or Training Imgs</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('birds')">Birds</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('cats')">Cats</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('dogs')">Dogs</button>
@@ -91,6 +91,10 @@
                         onclick="doShowWhichTrainingOrTestImages('flowers')">Flowers</button>
                     <button class="btn btn-default"
                         onclick="doShowWhichTrainingOrTestImages('rainbows')">Rainbows</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('houses')">Houses</button>
+                    <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('books')">Books</button>
+                    <button class="btn btn-default"
+                        onclick="doShowWhichTrainingOrTestImages('bananas')">Bananas</button>
                     <button class="btn btn-default" onclick="doInvert()">Invert</button>
                 </div>
             </div>
@@ -102,6 +106,7 @@
 <script src="js.vendor/p5.dom.min.js"></script>
 <script src="js.vendor/nn.js"></script>
 <script src="js.vendor/matrix.js"></script>
+<script src="utilities.js"></script>
 <script src="messages.js"></script>
 <script src="training.or.test.shapes.data.funcs.js"></script>
 <script src="current.training.data.funcs.js"></script>

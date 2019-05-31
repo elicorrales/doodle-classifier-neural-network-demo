@@ -1,6 +1,5 @@
-const shadeElem = document.getElementById('shade');
-const imageNameElem = document.getElementById('imageName');
-const imageTargetElem = document.getElementById('imageTarget');
+const guessJumbotronElem = document.getElementById('GUESS');
+const jumbotronElem = document.getElementById('JUMBOTRON');
 
 let currY = 0;
 let currX = 0;
@@ -31,25 +30,10 @@ let imageInfoGridArray;
 let imageInfoName;
 let imageInfoTarget;
 
-/*
-    if (localStorage) {
-        numHorz = parseInt(localStorage.getItem('numHorz'));
-    }
-    if (localStorage) {
-        numVert = parseInt(localStorage.getItem('numVert'));
-    }
-    let numInputs = parseInt(nnNumInputsElem.value);
-    if (numHorz === undefined || isNaN(numHorz)) {
-        numHorz = 1;
-    }
-    numVert = numInputs/numHorz;
-
-    if (numHorz !== numVert) {
-        showMessages('warning','Horz != Vert');
-    }
-*/
 
 const doClearCanvas = () => {
+    modeShowTrainingTestImagesOnCanvas = false;
+    jumbotronElem.style.display = 'none';
     background(255);
     currX = 0;
     currY = 0;
@@ -333,20 +317,6 @@ const doSaveImage = () => {
     }
 }
 
-const areTheseTwoGridArraysEqual = (a,b) => {
-    if (a === b) return true;
-    if (a.length != b.length) {
-        console.log('array a and b are not the same length');
-        return false;
-    }
-    for (let i=0; i<a.length; i++) {
-        if (a[i] !== b[i]) {
-            console.log('array a and b were differet at idx ' + i);
-            return false;
-        }
-    }
-    return true;
-}
 
 const doSaveImageInfo = () => {
     clearMessages();
@@ -418,6 +388,8 @@ const doPlaceImage = () => {
 
 const guess = () => {
     clearMessages();
+    jumbotronElem.style.display = 'none';
+
     if (currentTrainingData===undefined) {
         showMessages('danger','No Training Data');
         return;
@@ -442,45 +414,33 @@ const guess = () => {
     }
 
     let guesses = neuralNetwork.predict(imageInfoGridArray.flat());
-    console.log(guesses);
     let prevHighestGuessVal = 0;
     let highestGuess = 0;
-    let highestGuessIdx = -1;
+    let highestGuessPositionIdx = -1;
     guesses.forEach( (guess,gidx) => {
-        if (highestGuess<guess) { prevHighestGuessVal = highestGuess; highestGuess = guess; highestGuessIdx = gidx; }
+        if (highestGuess<guess) { prevHighestGuessVal = highestGuess; highestGuess = guess; highestGuessPositionIdx = gidx; }
     });
-    console.log(guesses);
-    console.log('highest idx:',highestGuessIdx,' val:',highestGuess);
-    //let tdMatch = 
-    
-    let keyCount = 0;
-    for (let key in currentTrainingData) {
-        if (currentTrainingData.hasOwnProperty(key)) {
-            console.log(key);
-            if (keyCount === highestGuessIdx) {
-                console.log('It is a ' + key);
-                break;
+    for (let guess=0; guess<guesses.length; guess++) {
+        for (let td=0; td<currentTrainingData.length; td++) {
+            if (currentTrainingData[td].outputs[guess] === 1) {
+                console.log(currentTrainingData[td].label + ': ' + guesses[guess]);
             }
-            keyCount++;
+        }
+
+    }
+    console.log(guesses);
+    let tdMatch;
+    
+    for (let i=0; i<currentTrainingData.length; i++) {
+        if (currentTrainingData[i].outputs[highestGuessPositionIdx] === 1) {
+            console.log('Guessing it is a ' + currentTrainingData[i].label);
+            tdMatch = currentTrainingData[i].label;
+            break;
         }
     }
-/*
-    currentTrainingData.find( td => td.target === highestGuessIdx);
-
 
     if (tdMatch!==undefined) {
-        showMessages('info','Possible Match:' + tdMatch.name + ':' + tdMatch.target);
-        imageNameElem.value = tdMatch.name;
-        imageTargetElem.value = tdMatch.target;
-        imageInfoName = tdMatch.name;
-        imageInfoTarget = tdMatch.target;
+        jumbotronElem.style.display = 'block';
+        guessJumbotronElem.innerHTML = 'Is it ' + tdMatch + '?';
     }
-*/
-}
-
-const doReTrain = () => {
-    clearMessages();
-    allTrained = false;
-    trainingStartTime = new Date().getTime();
-    train();
 }
