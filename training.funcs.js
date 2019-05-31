@@ -53,7 +53,7 @@ const getCurrentTrainingDataKeysAsArray = () => {
     return keysArray;
 }
 
-const isAllErrorsLessThanMin = (minErr, data, errors) => {
+const isAllErrorsLessThanMin = (minErr, data, errors, useThisFuncForTestResultsOnly) => {
     if (data === undefined || data.length === 0 || errors === undefined || errors.length === 0 || data.length !== errors.length) {
         throw 'danger', 'Cant Train: Data Array Len ('
         + data.length
@@ -70,7 +70,12 @@ const isAllErrorsLessThanMin = (minErr, data, errors) => {
         }
     }
 
-    if (Math.abs(data[whichDataIdxIsHigh] - errors[whichDataIdxIsHigh] < minErr)) {
+    let delta = Math.abs(data[whichDataIdxIsHigh] - errors[whichDataIdxIsHigh]);
+    let isGoodResult =  delta < minErr;
+
+    if (useThisFuncForTestResultsOnly) { return isGoodResult; }
+
+    if (isGoodResult) {
         currentTrainingDataIsAllTrainedTrackingArray[whichDataIdxIsHigh] = true;
         currentTrainingDataErrorTrackingArray[whichDataIdxIsHigh] = errors[whichDataIdxIsHigh];
     }

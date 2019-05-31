@@ -102,6 +102,8 @@ const updateCurrentData = () => {
         return;
     }
 
+    nnNumOutputsElem.value = numOutputs;
+
     let theHighOutputIdx = 0;
     for (let key in currentTrainingData) { //for each category....  ('birds','cats'...)
 
