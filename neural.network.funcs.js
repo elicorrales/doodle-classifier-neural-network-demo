@@ -8,8 +8,14 @@ const learningRateElem = document.getElementById('learningRate');
 const trainingWaitSliderElem = document.getElementById('trainingWaitSlider');
 const trainingWaitElem = document.getElementById('trainingWait');
 
+const autoRelearnElem = document.getElementById('autoRelearn');
+
 const overallMaxTrainingErrorGoalSliderElem = document.getElementById('overallMaxTrainingErrorGoalSlider');
 const overallMaxTrainingErrorGoalElem = document.getElementById('overallMaxTrainingErrorGoal');
+
+const overallMaxTrainingErrorSamplesSliderElem = document.getElementById('overallMaxTrainingErrorSamplesSlider');
+const overallMaxTrainingErrorSamplesElem = document.getElementById('overallMaxTrainingErrorSamples');
+
 const maxTestingErrorGoalSliderElem = document.getElementById('maxTestingErrorGoalSlider');
 const maxTestingErrorGoalElem = document.getElementById('maxTestingErrorGoal');
 
@@ -17,6 +23,7 @@ const maxTestingErrorGoalElem = document.getElementById('maxTestingErrorGoal');
 
 let neuralNetwork;
 let doTrain = false;
+let autoRelearn = autoRelearnElem.checked;
 
 const doCreateTrainNetwork = () => {
     try {
@@ -41,14 +48,16 @@ const doCreateTrainNetwork = () => {
         }
 
         neuralNetwork = new NeuralNetwork(numIn, numHid, numOut);
-        //showMessages('success', 'New Network Created');
+        showMessages('success', 'New Network Created');
         neuralNetwork.setLearningRate(learningRateSliderElem.value);
-        doTrain = true;
+        //doTrain = true;
     } catch (error) {
         showMessages('danger', 'Inside doCreateTrainNetwork: ' + error);
         console.log(error);
     }
 }
+
+
 
 const doTrainNetworkAgain = () => {
     try {
@@ -81,11 +90,8 @@ const doTrainNetworkAgain = () => {
 const doTestNetwork = () => {
     try {
         doClearCanvas();
-        if (toggleUseTrainingOrTestingData) {
-            testWithTrainingData();
-        } else {
-            testWithTestingData();
-        }
+
+        test();
 
     } catch (error) {
         showMessages('danger', 'Inside doTestNetwork: ' + error);
@@ -108,15 +114,25 @@ const doChangeTrainingWaitTime = (slider) => {
     resetTrainingStatus();
 }
 
+const doAutoRelearn = () => {
+    autoRelearn = autoRelearnElem.checked;
+}
+
 const doChangeOverallMaxTrainingErrorGoal = (slider) => {
-    let errorGoal = slider.value;
-    overallMaxTrainingErrorGoalElem.innerHTML = errorGoal;
+    let error = slider.value;
+    overallMaxTrainingErrorGoalElem.innerHTML = error;
+    resetTrainingStatus();
+}
+
+const doChangeOverallMaxTrainingErrorSamples = (slider) => {
+    let error = slider.value;
+    overallMaxTrainingErrorSamplesElem.innerHTML = error;
     resetTrainingStatus();
 }
 
 const doChangeMaxTestingErrorGoal = (slider) => {
-    let errorGoal = slider.value;
-    maxTestingErrorGoalElem.innerHTML = errorGoal;
+    let error = slider.value;
+    maxTestingErrorGoalElem.innerHTML = error;
     resetTrainingStatus();
 }
 

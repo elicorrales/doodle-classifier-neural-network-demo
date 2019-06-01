@@ -150,8 +150,6 @@ const updateCurrentData = () => {
     }
     currentTrainingData = tempTrainingData;
 
-//update - i dont think we want to collect all test data into one big array.  would be nice to test only one class at a time?
-/*
     let tempTestData = [];
     for (let key in currentTestData) { //for each category....  ('birds','cats'...)
         if (!currentTestData.hasOwnProperty(key)) {
@@ -161,11 +159,10 @@ const updateCurrentData = () => {
         tempTestData = tempTestData.concat(temp)
     }
     currentTestData = tempTestData;
-*/
 
     //now we want to shuffle so as to randomize for training and testing
     shuffle(currentTrainingData,true);
-    //shuffle(currentTestData,true);
+    shuffle(currentTestData,true);
 
 }
 

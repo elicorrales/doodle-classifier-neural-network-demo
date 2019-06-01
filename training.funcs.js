@@ -1,12 +1,16 @@
 'use strict';
 
-let totalErrorDelta = 1;
+let numSamplesWithErrorsGreaterThanMinError = 0;
 let outputErrors;
 let thereWasACriticalError = false;
 let allTrained = false;
 let trainingStartTime = new Date().getTime();
 let numTrainingCyclesBeforeTrained = 0;
 let currentTrainingDataIndex = 0;
+let RED = 0;
+let BLU = 0;
+let GRN = 0;
+let incWhichColor = 0;
 
 let displayResolution = 10;
 let currDispCol = 0;
@@ -20,6 +24,12 @@ const resetTrainingStatus = () => {
     trainingStartTime = new Date().getTime();
     numTrainingCyclesBeforeTrained = 0;
     currentTrainingDataIndex = 0;
+    numSamplesWithErrorsGreaterThanMinError = 0;
+    RED = 0;
+    BLU = 0;
+    GRN = 0;
+    incWhichColor = 0;
+
     if (currentTrainingDataIsAllTrainedTrackingArray !== undefined) {
         for (let i = 0; i < currentTrainingDataIsAllTrainedTrackingArray.length; i++) {
             currentTrainingDataIsAllTrainedTrackingArray[i] = false;
@@ -59,17 +69,15 @@ const getCurrentTrainingDataKeysAsArray = () => {
 }
 
 
-const isAllErrorsLessThanMin = (minErr, errors) => {
+const isAnyErrorHigherThanMin = (minErr, errors) => {
     if (errors === undefined || errors.length === 0) {
         throw 'danger', 'Missing errors during training?';
     }
 
-    let sumOfErrors = 0;
-    errors.forEach(e => { sumOfErrors += Math.abs(e); });
+    let isHigher = false;
+    errors.forEach(e => {  if (e > minErr) { isHigher = true; } });
 
-    let isGoodResult = sumOfErrors < (minErr * errors.length);
-
-    return isGoodResult;
+    return isHigher;
 }
 
 
@@ -80,8 +88,9 @@ const train = () => {
 
     try {
         if (allTrained) {
-            showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained
-                + ' cycles, Error: ' + parseFloat(totalErrorDelta).toFixed(4));
+            showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained 
+                    + ' Num Samples With Error:' + numSamplesWithErrorsGreaterThanMinError
+                    );
             doTrain = false;
             return;
         }
@@ -89,7 +98,13 @@ const train = () => {
         let currentTime = new Date().getTime();
         let deltaTrainingTime = (currentTime - trainingStartTime) / 1000;
         let trainingWait = parseInt(trainingWaitSliderElem.value);
-        showMessages('info', 'Training ' + parseInt(deltaTrainingTime).toFixed(1) + 'secs , at ' + numTrainingCyclesBeforeTrained + ' cycles ' + 'error: ' + parseFloat(totalErrorDelta).toFixed(4) + '...');
+        showMessages('info', 'Training ' 
+                        + parseInt(deltaTrainingTime).toFixed(1) + 'secs , ' 
+                        + numTrainingCyclesBeforeTrained + ' Tot Samples ' 
+                        + numSamplesWithErrorsGreaterThanMinError
+                        + ' Error Samples, '
+                        + ((numSamplesWithErrorsGreaterThanMinError/numTrainingCyclesBeforeTrained)*100).toFixed(2) + '% Bad' 
+                        + '...');
         if (deltaTrainingTime > trainingWait && !allTrained) {
             showMessages('danger', 'Time Ran Out');
             doTrain = false;
@@ -101,17 +116,19 @@ const train = () => {
             //TRAIN
             let whichInputs = currentTrainingData[currentTrainingDataIndex];
             outputErrors = neuralNetwork.train(whichInputs.inputs, whichInputs.outputs);
-
-            let sumErrors = 0;
-            outputErrors.forEach(e => { sumErrors += Math.abs(e); });
+            let outputs = neuralNetwork.predict(whichInputs.inputs);
+            let overallMaxTrainingErrorGoal = overallMaxTrainingErrorGoalSliderElem.value;
+            let overallMaxTrainingErrorSamples = overallMaxTrainingErrorSamplesSliderElem.value;
+            outputErrors.forEach(e => { if (e > overallMaxTrainingErrorGoal) { numSamplesWithErrorsGreaterThanMinError++; }});
+            let fractionBad = (numSamplesWithErrorsGreaterThanMinError/currentTrainingData.length).toFixed(3);
 
             //DISPLAY PROGRESS
             let horzResolution = width / outputErrors.length;
             let vertResolution = height / outputErrors.length;
             let cols = width / horzResolution;
             let rows = height / vertResolution;
-
-            let colorVal = Math.trunc(255 - 255 * (sumErrors / outputErrors.length));
+            let colorVal = Math.trunc(255*fractionBad);
+            if (colorVal<0) colorVal = 0;
             fill(colorVal, colorVal, colorVal);
             rect(currDispCol * horzResolution, currDispRow * vertResolution, horzResolution, vertResolution);
             currDispCol++;
@@ -123,28 +140,37 @@ const train = () => {
                 currDispRow = 0;
             }
 
-            //CHECK IF TRAINED
-            let overallMaxTrainingErrorGoal = overallMaxTrainingErrorGoalSliderElem.value;
-            let allErrorsLessThanMin = isAllErrorsLessThanMin(overallMaxTrainingErrorGoal, outputErrors);
 
-            if (allErrorsLessThanMin) {
-                allTrained = true;
-            }
-
+            numTrainingCyclesBeforeTrained++;
             currentTrainingDataIndex++;
+
+
             if (currentTrainingDataIndex >= currentTrainingData.length) {
-                showMessages('danger', 'done with currentTraingData.length');
-                doTrain = false;
-                return;
+                if (!autoRelearn) {
+                    if (numSamplesWithErrorsGreaterThanMinError < overallMaxTrainingErrorSamples) {
+                        showMessages('success', 'Trained, Used All Available Training Data'
+                            +' Time: ' + parseInt(deltaTrainingTime).toFixed(1) + 'secs ,' 
+                            + numTrainingCyclesBeforeTrained + ' Tot Samples ' 
+                            + numSamplesWithErrorsGreaterThanMinError
+                            + ' Error Samples, '
+                            + ((numSamplesWithErrorsGreaterThanMinError/numTrainingCyclesBeforeTrained)*100).toFixed(2) + '% Bad' 
+                            + '...');
+                        allTrained = true;
+                    } else {
+                        showMessages('info', 'NOT Trained, Used All Available Training Data'
+                            +' Time: ' + parseInt(deltaTrainingTime).toFixed(1) + 'secs , ' 
+                            + numTrainingCyclesBeforeTrained + ' Tot Samples ' 
+                            + numSamplesWithErrorsGreaterThanMinError
+                            + ' Error Samples, '
+                            + ((numSamplesWithErrorsGreaterThanMinError/numTrainingCyclesBeforeTrained)*100).toFixed(2) + '% Bad' 
+                            + '...');
+                    }
+                    doTrain = false;
+                    return;
+                } else {
+                    currentTrainingDataIndex = 0;
+                }
             }
-
-            if (allTrained) {
-                showMessages('success', 'All Trained ' + numTrainingCyclesBeforeTrained
-                    + ' cycles, Error: ' + parseFloat(totalErrorDelta).toFixed(4));
-                doTrain = false;
-                return;
-            }
-
 
 
         } else {

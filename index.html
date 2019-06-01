@@ -38,14 +38,19 @@
                     Learning Rate: <span id="learningRate"></span>
                     <input id="learningRateSlider" type="range" min="0.01" max="3.0" step="0.01" value="0.01" onchange="doChangeLearningRate(this)">
 
+                    <div>
+                        <label class="checkbox-inline"><input id="autoRelearn" type="checkbox" onclick="doAutoRelearn()">Auto Re-learn</label>
+                    </div>
                     Overall Max Training Error Goal: <span id="overallMaxTrainingErrorGoal"></span>
                     <input id="overallMaxTrainingErrorGoalSlider" type="range" min="0.001" max="8.0" step="0.01" value="3.0" onchange="doChangeOverallMaxTrainingErrorGoal(this)">
+                    Overall Max Training Error Samples: <span id="overallMaxTrainingErrorSamples"></span>
+                    <input id="overallMaxTrainingErrorSamplesSlider" type="range" min="0" max="6400" step="10" value="0" onchange="doChangeOverallMaxTrainingErrorSamples(this)">
 
                     Max Test Error Goal: <span id="maxTestingErrorGoal"></span>
                     <input id="maxTestingErrorGoalSlider" type="range" min="0.001" max="8.0" step="0.01" value="3.0" onchange="doChangeMaxTestingErrorGoal(this)">
 
                     Time To Wait (seconds): <span id="trainingWait"></span>
-                    <input id="trainingWaitSlider" type="range" min="1" max="60" step="1" value="360" onchange="doChangeTrainingWaitTime(this)">
+                    <input id="trainingWaitSlider" type="range" min="1" max="360" step="1" value="360" onchange="doChangeTrainingWaitTime(this)">
 
                 </div>
                 <div class="panel-footer">
