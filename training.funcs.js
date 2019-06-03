@@ -196,7 +196,7 @@ const train = () => {
 
 
         } else {
-            showMessages('danger', 'There was nothing to train');
+            showMessages('danger', 'There was nothing to train, either missing data, or missing network.');
             doTrain = false;
         }
 

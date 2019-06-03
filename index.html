@@ -2,11 +2,11 @@
 <html>
 
 <head>
-<!--
+    <!--
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 -->
-    <link rel="stylesheet" href="js.vendor/bootstrap.min.css" >
+    <link rel="stylesheet" href="js.vendor/bootstrap.min.css">
     <title>Doodle Detection Test</title>
 </head>
 
@@ -34,21 +34,24 @@
                         <button class="btn btn-info" onclick="doTrainNetwork()">Train Network</button>
                         <button class="btn btn-info" onclick="doTestNetwork()">Test Network</button>
                         <button class="btn btn-info" onclick="doDoodle()">Doodle</button>
+                        <button class="btn btn-info" onclick="doPlaceImage()">Put Back</button>
                         <button class="btn btn-info" onclick="doGuess()">Guess</button>
-                        <button class="btn btn-info" onclick="doImageBoundary()">Img Boundary</button>
-                        <button class="btn btn-info" onclick="doImageGrid()">Img Grid</button>
                     </div>
                     Learning Rate: <span id="learningRate"></span>
-                    <input id="learningRateSlider" type="range" min="0.01" max="3.0" step="0.01" value="0.05" onchange="doChangeLearningRate(this)">
+                    <input id="learningRateSlider" type="range" min="0.01" max="3.0" step="0.01" value="0.05"
+                        onchange="doChangeLearningRate(this)">
 
                     <div>
-                        <label class="checkbox-inline"><input id="autoRelearn" type="checkbox" onclick="doAutoRelearn()">Auto Re-learn</label>
+                        <label class="checkbox-inline"><input id="autoRelearn" type="checkbox"
+                                onclick="doAutoRelearn()">Auto Re-learn</label>
                     </div>
                     Min Required Test % Correct: <span id="minRequiredTestPercentCorrect"></span>
-                    <input id="minRequiredTestPercentCorrectSlider" type="range" min="0" max="100" step="1" value="80" onchange="doChangeMinRequiredTestPercentCorrect(this)">
+                    <input id="minRequiredTestPercentCorrectSlider" type="range" min="0" max="100" step="1" value="80"
+                        onchange="doChangeMinRequiredTestPercentCorrect(this)">
 
                     Time To Wait (seconds): <span id="trainingWait"></span>
-                    <input id="trainingWaitSlider" type="range" min="1" max="720" step="10" value="720" onchange="doChangeTrainingWaitTime(this)">
+                    <input id="trainingWaitSlider" type="range" min="1" max="720" step="10" value="720"
+                        onchange="doChangeTrainingWaitTime(this)">
 
                 </div>
                 <div class="panel-footer">
@@ -74,6 +77,13 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Canvas
+                    <div>
+                    <label for="doodleName">Doodle Name:
+                        <input id="doodleName" name="doodleName" type="text" placeholder="doodle name" />
+                    </label>
+                    <button class="btn btn-default" onclick="doSaveDoodleToDisk()">Save Doodle</button>
+                    <button class="btn btn-default" onclick="doLoadDoodleFromDisk()">Load Doodle</button>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="panel-body" style="background:aliceblue">
@@ -91,7 +101,8 @@
                 </div>
                 <div class="panel-footer">
                     Show The Input Data:
-                    <button class="btn btn-default" onclick="doToggleTrainingVsTestingImages(this)">Toggle Test Or Training Imgs</button>
+                    <button class="btn btn-default" onclick="doToggleTrainingVsTestingImages(this)">Toggle Test Or
+                        Training Imgs</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('birds')">Birds</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('cats')">Cats</button>
                     <button class="btn btn-default" onclick="doShowWhichTrainingOrTestImages('dogs')">Dogs</button>
@@ -121,7 +132,7 @@
 <script src="training.funcs.js"></script>
 <script src="testing.funcs.js"></script>
 <script src="neural.network.funcs.js"></script>
-<script src="doodling.funcs.js"></script>
+<script src="mouse.events.js"></script>
 <script src="guessing.funcs.js"></script>
 <script src="sketch.js"></script>
 

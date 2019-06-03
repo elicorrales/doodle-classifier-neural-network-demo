@@ -20,7 +20,7 @@ let autoRelearn = autoRelearnElem.checked;
 
 const doCreateTrainNetwork = () => {
     try {
-        saveAnyImageAlreadyOnCanvas();
+        //grabAnyImageAlreadyOnCanvas();
         doClearCanvas();
         clearMessages();
         resetTrainingStatus();
@@ -55,7 +55,7 @@ const doCreateTrainNetwork = () => {
 
 const doTrainNetwork = () => {
     try {
-        saveAnyImageAlreadyOnCanvas();
+        //grabAnyImageAlreadyOnCanvas();
         doClearCanvas();
         clearMessages();
         resetTrainingStatus();
@@ -98,7 +98,7 @@ const doTestNetwork = () => {
 }
 
 const doChangeLearningRate = (slider) => {
-    saveAnyImageAlreadyOnCanvas();
+    //grabAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -109,7 +109,7 @@ const doChangeLearningRate = (slider) => {
 }
 
 const doChangeTrainingWaitTime = (slider) => {
-    saveAnyImageAlreadyOnCanvas();
+    //grabAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -120,7 +120,7 @@ const doChangeTrainingWaitTime = (slider) => {
 }
 
 const doAutoRelearn = () => {
-    saveAnyImageAlreadyOnCanvas();
+    //grabAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -128,7 +128,7 @@ const doAutoRelearn = () => {
 }
 
 const doChangeMinRequiredTestPercentCorrect = (slider) => {
-    saveAnyImageAlreadyOnCanvas();
+    //grabAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -139,7 +139,7 @@ const doChangeMinRequiredTestPercentCorrect = (slider) => {
 
 
 const doDoodle = () => {
-    eraseFromMemoryAnySavedImageAlreadyOnCavnas();
+    //eraseFromMemoryAnyGrabbedImageAlreadyOnCavnas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -149,6 +149,8 @@ const doDoodle = () => {
 
 const doGuess = () => {
     clearMessages();
+    //doClearCanvas();
     resetTrainingStatus();
+    //grabAnyImageAlreadyOnCanvas();
     guess();
 }

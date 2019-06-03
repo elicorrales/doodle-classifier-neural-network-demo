@@ -1,5 +1,6 @@
 const guessJumbotronElem = document.getElementById('GUESS');
 const jumbotronElem = document.getElementById('JUMBOTRON');
+const doodleNameElem = document.getElementById('doodleName');
 
 let currY = 0;
 let currX = 0;
@@ -17,7 +18,7 @@ let rightBlackY = -1;
 let numHorz = imgBitmapWidth;
 let numVert = imgBitmapHeight;
 
-let savedAnyImageAlreadyOnCanvas;
+//let grabbedAnyImageAlreadyOnCanvas;
 let imageRegion;
 let imageStartX;
 let imageStartY;
@@ -55,15 +56,17 @@ const doClearCanvas = () => {
     currFilledGridSquaresImage = undefined;
     summedFilledGridSquaresImage = undefined;
     imageInfoGridArray = undefined;
-    imageRegion = undefined;
 }
 
 const doPlaceImage = () => {
 
     clearMessages();
+
+    modeShowTrainingTestImagesOnCanvas = false;
+
     if (imageRegion !== undefined) {
-        background(255);
-        image(imageRegion, imageStartX, imageStartY);
+        //imageRegion.save();
+        image(imageRegion,0,0);
     } else {
         showMessages('danger','No Image To Place');
         return false;
@@ -71,19 +74,25 @@ const doPlaceImage = () => {
     return true;
 }
 
-const saveAnyImageAlreadyOnCanvas = () => {
-    savedAnyImageAlreadyOnCanvas = get();
-    savedAnyImageAlreadyOnCanvas.loadPixels();
-}
-
-const placeBackAnySavedImageAlreadyOnCanvas = () => {
-    if (savedAnyImageAlreadyOnCanvas !== undefined) {
-        image(savedAnyImageAlreadyOnCanvas,0,0);
+const doSaveDoodleToDisk = () => {
+    
+    if (imageRegion !== undefined && doodleNameElem.value !== undefined && doodleNameElem.value !== '') {
+        imageRegion.save(doodleNameElem.value,'png');
+    } else {
+        showMessages('danger','No Image To Save or No Image Name Or You didnt Try to Guess');
+        return false;
     }
 }
 
-const eraseFromMemoryAnySavedImageAlreadyOnCavnas = () => {
-    savedAnyImageAlreadyOnCanvas = undefined;
+const doLoadDoodleFromDisk = () => {
+    
+    if (doodleNameElem.value !== undefined && doodleNameElem.value !== '') {
+        imageRegion = loadImage('./doodles/' + doodleNameElem.value + '.png');
+        image(imageRegion,0,0);
+    } else {
+        showMessages('danger','No Image To Save or No Image Name Or You didnt Try to Guess');
+        return false;
+    }
 }
 
 const convertDoodleToInputs = () => {
@@ -110,19 +119,22 @@ const convertDoodleToInputs = () => {
 }
 
 const guess = () => {
-    clearMessages();
+    //clearMessages();
     jumbotronElem.style.display = 'none';
 
     if (currentTrainingData===undefined) {
         showMessages('danger','No Training Data');
+        imageRegion = get();
+        //imageRegion.save();
         return;
     }
     
-    convertDoodleToInputs ();
+    convertDoodleToInputs();
 
 
     if (neuralNetwork === undefined) {
         showMessages('danger','No Neural Network');
+        imageRegion = get();
         return;
     }
 

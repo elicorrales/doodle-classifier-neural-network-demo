@@ -1,5 +1,7 @@
 'use strict';
 
+let canvas;
+
 function preload() {
     preloadTrainImagesFiles();
 }
@@ -12,7 +14,7 @@ function setup() {
     //28 * canvas height multiplier
     //28 * 10 = 280
     //28 = 20 = 560
-    let canvas = createCanvas(560,560);
+    canvas = createCanvas(280,280);
     //resizeCanvas(imgBitmapWidth*numImgsAcross, imgBitmapHeight*numImgsDown);
     canvas.parent('canvasParent');
     background(invertTrainingImagesAndCanvasColoring ? 255 : 0);
@@ -23,10 +25,20 @@ function setup() {
 
 
 function draw() {
+
+    if (inverted) {
+        background(invertTrainingImagesAndCanvasColoring ? 255 : 0);
+        inverted = false;
+    }
+
     if (modeShowTrainingTestImagesOnCanvas) {
-        drawTrainingOrTestImagesOnCanvas();
+        //if (loadedDataImageToDrawBlownUp === undefined) {
+            drawTrainingOrTestImagesOnCanvas();
+        //} else {
+            //image(loadedDataImageToDrawBlownUp);
+        //}
     } else {
-        placeBackAnySavedImageAlreadyOnCanvas();
+        //placeBackAnyGrabbedImageAlreadyOnCanvas();
         if (doTrain) {
             train();
         }

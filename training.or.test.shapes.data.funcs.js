@@ -80,6 +80,7 @@ let bananasTestData;
 
 let currShapesTrainingImagesToShow;
 let invertTrainingImagesAndCanvasColoring = false;
+let inverted = false;
 let toggleTrainingVsTesting = false;
 let currWhichShapeNameToShow;
 let toggleModifiedTrainingImages = false;
@@ -271,11 +272,13 @@ const doShowWhichTrainingOrTestImages = (whichShapeNameToShow) => {
 
 const doInvert = () => {
 
-    modeShowTrainingTestImagesOnCanvas = true;
+    //modeShowTrainingTestImagesOnCanvas = true;
     doTrain = false;
+    inverted = true;
 
     invertTrainingImagesAndCanvasColoring = invertTrainingImagesAndCanvasColoring ? false : true;
     setupTrainingAndTestingData();
+    neuralNetwork = undefined;
 }
 
 const doToggleTrainingVsTestingImages = (button) => {
@@ -295,6 +298,7 @@ const doToggleTrainingVsTestingImages = (button) => {
 const drawTrainingOrTestImagesOnCanvas = () => {
 
     background(invertTrainingImagesAndCanvasColoring ? 255 : 0);
+
     if (currShapesTrainingImagesToShow !== undefined) {
         drawImgSet(currShapesTrainingImagesToShow);
     }
