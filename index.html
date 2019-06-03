@@ -2,8 +2,11 @@
 <html>
 
 <head>
+<!--
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+-->
+    <link rel="stylesheet" href="js.vendor/bootstrap.min.css" >
     <title>Doodle Detection Test</title>
 </head>
 
@@ -27,8 +30,8 @@
                     <label for="nnNumOutputs">Outputs:</label>
                     <input id="nnNumOutputs" type="text" placeholder="no of outputs" value="1" />
                     <div>
-                        <button class="btn btn-info" onclick="doCreateTrainNetwork()">Create/Train Network</button>
-                        <button class="btn btn-info" onclick="doTrainNetworkAgain()">Train Network More</button>
+                        <button class="btn btn-info" onclick="doCreateTrainNetwork()">Create Network</button>
+                        <button class="btn btn-info" onclick="doTrainNetwork()">Train Network</button>
                         <button class="btn btn-info" onclick="doTestNetwork()">Test Network</button>
                         <button class="btn btn-info" onclick="doDoodle()">Doodle</button>
                         <button class="btn btn-info" onclick="doGuess()">Guess</button>
@@ -41,16 +44,11 @@
                     <div>
                         <label class="checkbox-inline"><input id="autoRelearn" type="checkbox" onclick="doAutoRelearn()">Auto Re-learn</label>
                     </div>
-                    Overall Max Training Error Goal: <span id="overallMaxTrainingErrorGoal"></span>
-                    <input id="overallMaxTrainingErrorGoalSlider" type="range" min="0.001" max="8.0" step="0.01" value="3.0" onchange="doChangeOverallMaxTrainingErrorGoal(this)">
-                    Overall Max Training Error Samples: <span id="overallMaxTrainingErrorSamples"></span>
-                    <input id="overallMaxTrainingErrorSamplesSlider" type="range" min="0" max="6400" step="10" value="0" onchange="doChangeOverallMaxTrainingErrorSamples(this)">
-
-                    Max Test Error Goal: <span id="maxTestingErrorGoal"></span>
-                    <input id="maxTestingErrorGoalSlider" type="range" min="0.001" max="8.0" step="0.01" value="3.0" onchange="doChangeMaxTestingErrorGoal(this)">
+                    Min Required Test % Correct: <span id="minRequiredTestPercentCorrect"></span>
+                    <input id="minRequiredTestPercentCorrectSlider" type="range" min="0" max="100" step="1" value="80" onchange="doChangeMinRequiredTestPercentCorrect(this)">
 
                     Time To Wait (seconds): <span id="trainingWait"></span>
-                    <input id="trainingWaitSlider" type="range" min="1" max="360" step="1" value="360" onchange="doChangeTrainingWaitTime(this)">
+                    <input id="trainingWaitSlider" type="range" min="1" max="720" step="10" value="720" onchange="doChangeTrainingWaitTime(this)">
 
                 </div>
                 <div class="panel-footer">

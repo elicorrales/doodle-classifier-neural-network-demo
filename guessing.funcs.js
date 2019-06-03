@@ -394,26 +394,25 @@ const guess = () => {
         showMessages('danger','No Training Data');
         return;
     }
-    /*
-    if (imageInfoGridArray===undefined) {
-        showSecondaryMessages('danger','No Grid Image. Did you draw one?')
-        return;
-    }
-    */
-    if (doPlaceImage()) {
-        if (!doImageBoundary()) return;
-        if (!doFillGridSquares()) return;
-    } else {
-        if (!doImageBoundary()) return;
-        if (!doFillGridSquares()) return;
-    }
+    
+    doPlaceImage();
+//    if (doPlaceImage()) {
+
+//so we either put back an image that was there... or there's a new image..... or theres nothing
+        if (!doImageBoundary()) { console.log('image boundary false'); return; }
+        if (!doFillGridSquares()) { console.log('fill squares false'); return; }
+    //} else {
+        //if (!doImageBoundary()) return;
+        //if (!doFillGridSquares()) return;
+    //}
 
     if (neuralNetwork === undefined) {
         showMessages('danger','No Neural Network');
         return;
     }
 
-    let guesses = neuralNetwork.predict(imageInfoGridArray.flat());
+    let normalized = imageInfoGridArray.flat().map( x => x/255);
+    let guesses = neuralNetwork.predict(normalized);
     let prevHighestGuessVal = 0;
     let highestGuess = 0;
     let highestGuessPositionIdx = -1;
@@ -443,4 +442,5 @@ const guess = () => {
         jumbotronElem.style.display = 'block';
         guessJumbotronElem.innerHTML = 'Is it ' + tdMatch + '?';
     }
+    doPlaceImage();
 }

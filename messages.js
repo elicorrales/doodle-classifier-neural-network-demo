@@ -10,6 +10,7 @@ const showMessages = (type, messages) => {
     messagesElem.innerHTML = messages;
 }
 
+/*
 const trainingMessagesElem = document.getElementById('trainingMessages');
 const clearTrainingMessages = () => {
     trainingMessagesElem.className = '';
@@ -19,3 +20,4 @@ const showTrainingMessages = (type, messages) => {
     trainingMessagesElem.className = 'alert alert-' + type;
     trainingMessagesElem.innerHTML = messages;
 }
+*/

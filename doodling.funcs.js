@@ -25,7 +25,7 @@ mouseReleased = () => {
 
 mouseDragged = () => {
     mouseIsDragged = true;
-    stroke(0);
+    strokeWeight(8);
     //fill(0);
     if (!prevMouseX || !prevMouseY) {
         point(mouseX,mouseY);

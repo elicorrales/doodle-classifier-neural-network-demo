@@ -18,7 +18,15 @@ function setup() {
 function draw() {
     if (modeShowTrainingTestImagesOnCanvas) {
         drawTrainingOrTestImagesOnCanvas();
-    } else if (doTrain) {
-        train();
-    } 
+    } else {
+        if (doTrain) {
+            train();
+        }
+        if (doTest && isReadyToTest) {
+            test();
+        }
+        if (allTrained) {
+            showMessages('success','All Trained');
+        }
+    }
 }

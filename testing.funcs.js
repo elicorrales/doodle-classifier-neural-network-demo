@@ -1,23 +1,24 @@
-
+let actualPercentCorrect = 0;
 let toggleModifiedTestingData = false;
 let totalTestErrorDelta = 0;
-const isAllDifferencesLessThanMin = (minErr, expected, outputs) => {
-    if (expected === undefined || outputs === undefined || expected.length !== outputs.length) {
-        throw 'danger', 'Outputs Issue during testing - see \'isAllDifferencesLessThanMin()\'';
-    }
 
-    let sumOfDelta = 0;
-    for (let i=0; i< expected.length; i++) {
-        let delta = Math.abs(expected[i] - outputs[i]);
-        sumOfDelta += delta;
+const findMaxFloatValueInArray = (outputs) => {
+    if (outputs === undefined) {
+        throw 'Outputs undefined';
     }
-    let isGoodResult =  sumOfDelta < minErr*expected.length;
-    totalTestErrorDelta = sumOfDelta;
-
-    return isGoodResult;
+    let max = 0;
+    for (let i=0; i<outputs.length; i++) {
+        if (max < outputs[i]) max = outputs[i];
+    }
+    return max;
 }
-
-
+const findIndexOfMaxOutput = (outputs) => {
+    if (outputs === undefined) {
+        throw 'Outputs undefined';
+    }
+    let max = findMaxFloatValueInArray(outputs);
+    return outputs.indexOf(max);
+}
 
 
 /*********************************************************************************
@@ -26,8 +27,6 @@ const isAllDifferencesLessThanMin = (minErr, expected, outputs) => {
  * See code which loads the data.
  */
 const test = () => {
-
-    clearMessages();
 
     let useWhichDataToTest;
 
@@ -38,14 +37,13 @@ const test = () => {
     }
 
     if (useWhichDataToTest === undefined) {
-        showMessages('danger', 'There is NO Test Data');
-        return;
+        throw 'There is NO Test Data';
     }
     if (neuralNetwork === undefined) {
-        showMessages('danger', 'No Neural Network');
-        return;
+        throw 'No Neural Network';
     }
 
+    let totalNumSamples = 0;
     let totalErrorCount = 0;
     for (let i = 0; i < useWhichDataToTest.length; i++) {
         let category = useWhichDataToTest[i].label;
@@ -56,18 +54,28 @@ const test = () => {
                 inputs[j] = 1;
             }
         }
+        totalNumSamples++;
         let outputs = neuralNetwork.predict(inputs);
-        let maxTestingErrorGoal = maxTestingErrorGoalSliderElem.value;
-        if (!isAllDifferencesLessThanMin(maxTestingErrorGoal, expectedOutputs, outputs)) {
+        let categoryGuessed = findIndexOfMaxOutput(outputs);
+        let categoryExpected = findIndexOfMaxOutput(expectedOutputs);
+        if (categoryGuessed != categoryExpected) {
             totalErrorCount ++;
         }
         //showMessages('info', 'Testing  #' + i  + ', ' + category + ', errors: ' +  totalErrorCount + ' , ' + totalTestErrorDelta + '...');
     }
-    console.log('Total Errors : ' + totalErrorCount);
+    showMessages('info','Test Results: Errors : ' + totalErrorCount + ', Samples: ' + totalNumSamples + ', ' + Math.round(((totalNumSamples-totalErrorCount)/totalNumSamples)*100) + '% Correct');
+    console.log('Test Results: Errors : ' + totalErrorCount + ', Samples: ' + totalNumSamples + ', ' + Math.round(((totalNumSamples-totalErrorCount)/totalNumSamples)*100) + '% Correct');
+    actualPercentCorrect = Math.round(((totalNumSamples-totalErrorCount)/totalNumSamples)*100);
+    allTrained = actualPercentCorrect >= minRequiredTestPercentCorrectSliderElem.value;
+    isReadyToTest = false;
 }
 
 
 const doToggleModifiedTestingData = (button) => {
+    doClearCanvas();
+    clearMessages();
+    resetTrainingStatus();
+    
     toggleModifiedTestingData = toggleModifiedTestingData ? false : true;
     if (toggleModifiedTestingData) {
         button.className = 'btn btn-warning';
