@@ -106,13 +106,14 @@ const convertImagesToTrainingOrTestingData = (images, label, type) => {
         let tempInputs = images.slice(i, i + imgBitmapSize); //get 1 image as inputs
         dataObject.inputs = [];
         for (let j=0; j<tempInputs.length; j++) {
-            if (tempInputs[j] !== 0) {
-                let numerator = tempInputs[j];
+            //if (tempInputs[j] !== 0) {
+                let numerator = invertTrainingImagesAndCanvasColoring ? 255 - tempInputs[j] : tempInputs[j];
+                //let numerator = tempInputs[j];
                 let normalized = numerator/255;
                 dataObject.inputs[j] = normalized;
-            } else {
-                dataObject.inputs[j] = tempInputs[j];
-            }
+            //} else {
+                //dataObject.inputs[j] = tempInputs[j];
+            //}
         }
         //dataObject.inputs = images.slice(i, i + imgBitmapSize); //get 1 image as inputs
         dataObject.label = label;
@@ -193,14 +194,15 @@ const drawImgSet = (imgArray) => {
             if (imgIdx >= numImgs) {
                 break;
             }
-            drawSingleImage(imgIdx, imgArray, imgAcrossIdx, imgDownIdx);
+            drawSingleImageFromArray(imgIdx, imgArray, imgAcrossIdx, imgDownIdx);
             imgIdx++;
         }
     }
 
 }
 
-const drawSingleImage = (imgIdx, imgArray, imgAcrossIdx, imgDownIdx) => {
+
+const drawSingleImageFromArray = (imgIdx, imgArray, imgAcrossIdx, imgDownIdx) => {
     let startImgArrIdx = imgIdx * imgBitmapSize;
     let endImgArrIdx = startImgArrIdx + imgBitmapSize;
     let imgSubArr = imgArray.slice(startImgArrIdx, endImgArrIdx);
@@ -273,6 +275,7 @@ const doInvert = () => {
     doTrain = false;
 
     invertTrainingImagesAndCanvasColoring = invertTrainingImagesAndCanvasColoring ? false : true;
+    setupTrainingAndTestingData();
 }
 
 const doToggleTrainingVsTestingImages = (button) => {

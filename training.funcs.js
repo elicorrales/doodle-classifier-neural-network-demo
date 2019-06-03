@@ -113,7 +113,7 @@ const train = () => {
         if (neuralNetwork !== undefined && currentTrainingData !== undefined && !isEmpty(currentTrainingData)) {
 
             let fractionBad = 0;
-            for (let someCycles = 0; someCycles < 300; someCycles++) {
+            for (let someCycles = 0; someCycles < 500; someCycles++) {
                 if (currentTrainingDataIndex >= currentTrainingData.length) {
                     break;
                 }

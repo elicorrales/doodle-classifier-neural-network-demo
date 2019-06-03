@@ -20,6 +20,7 @@ let autoRelearn = autoRelearnElem.checked;
 
 const doCreateTrainNetwork = () => {
     try {
+        saveAnyImageAlreadyOnCanvas();
         doClearCanvas();
         clearMessages();
         resetTrainingStatus();
@@ -54,6 +55,7 @@ const doCreateTrainNetwork = () => {
 
 const doTrainNetwork = () => {
     try {
+        saveAnyImageAlreadyOnCanvas();
         doClearCanvas();
         clearMessages();
         resetTrainingStatus();
@@ -96,6 +98,7 @@ const doTestNetwork = () => {
 }
 
 const doChangeLearningRate = (slider) => {
+    saveAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -106,6 +109,7 @@ const doChangeLearningRate = (slider) => {
 }
 
 const doChangeTrainingWaitTime = (slider) => {
+    saveAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -116,6 +120,7 @@ const doChangeTrainingWaitTime = (slider) => {
 }
 
 const doAutoRelearn = () => {
+    saveAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -123,6 +128,7 @@ const doAutoRelearn = () => {
 }
 
 const doChangeMinRequiredTestPercentCorrect = (slider) => {
+    saveAnyImageAlreadyOnCanvas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
@@ -133,9 +139,12 @@ const doChangeMinRequiredTestPercentCorrect = (slider) => {
 
 
 const doDoodle = () => {
+    eraseFromMemoryAnySavedImageAlreadyOnCavnas();
     doClearCanvas();
     clearMessages();
     resetTrainingStatus();
+    jumbotronElem.style.display = 'block';
+    guessJumbotronElem.innerHTML = '...What Will It Be..';
 }
 
 const doGuess = () => {

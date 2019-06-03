@@ -26,7 +26,7 @@ mouseReleased = () => {
 mouseDragged = () => {
     mouseIsDragged = true;
     strokeWeight(8);
-    //fill(0);
+    stroke(invertTrainingImagesAndCanvasColoring ? 0 : 255);
     if (!prevMouseX || !prevMouseY) {
         point(mouseX,mouseY);
         prevMouseX = mouseX; prevMouseY = mouseY;
@@ -47,8 +47,9 @@ mouseClicked = () => {
     
     //this should mean we havent actually drawn anything on canvas since mouse didnt move, just clicked (on a point)
     if (!mouseIsDragged) {
-        stroke(0);
-        //fill(0);
+        strokeWeight(8);
+        stroke(invertTrainingImagesAndCanvasColoring ? 0 : 255);
         point(mouseX,mouseY);
     }
+
 }
