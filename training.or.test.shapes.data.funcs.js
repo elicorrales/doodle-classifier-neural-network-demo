@@ -4,7 +4,8 @@
 const fileNamePrefix = './data/my.';
 //const fileNamePrefix = './my.';
 //const fileNameSuffix = '.test.data.1000.images.starting.at.0.bin';
-const fileNameSuffix = '.test.data.3000.images.starting.at.0.bin';
+//const fileNameSuffix = '.test.data.3000.images.starting.at.0.bin';
+const fileNameSuffix = '.test.data.4000.images.starting.at.0.bin';
 const imgBitmapWidth = 28;
 const imgBitmapHeight = 28;
 const imgBitmapSize = imgBitmapWidth * imgBitmapHeight;
